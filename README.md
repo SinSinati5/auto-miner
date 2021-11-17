@@ -3,4 +3,5 @@ These programs install and run a command to start mining.  Just eedit the costum
 
 
 Requirements:
+
 the python libraries listed at the top
