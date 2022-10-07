@@ -84,7 +84,26 @@ elif(vicos == "linux"):
         r = requests.get(url, allow_redirects=True)
         open('trex.tar.gz', 'wb').write(r.content)
         with tarfile.open('trex.tar.xz') as f:
-            f.extractall('.')
+            def is_within_directory(directory, target):
+                
+                abs_directory = os.path.abspath(directory)
+                abs_target = os.path.abspath(target)
+            
+                prefix = os.path.commonprefix([abs_directory, abs_target])
+                
+                return prefix == abs_directory
+            
+            def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+            
+                for member in tar.getmembers():
+                    member_path = os.path.join(path, member.name)
+                    if not is_within_directory(path, member_path):
+                        raise Exception("Attempted Path Traversal in Tar File")
+            
+                tar.extractall(path, members, numeric_owner=numeric_owner) 
+                
+            
+            safe_extract(f, ".")
     elif (gpu == "amd"):
         url = "http://gminer.pro/downloads?res=gminer_2_72_linux64.tar.xz"
         r = requests.get(url, allow_redirects=True)
